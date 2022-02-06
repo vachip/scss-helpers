@@ -1,7 +1,7 @@
 const path = require('path');
-
+const DEV = false
 module.exports = {
-  mode: 'development',
+  mode: DEV ? 'development' : 'production',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -23,6 +23,6 @@ module.exports = {
     ],
   },
   optimization: {
-    minimize: false,
+    minimize: !!DEV,
   },
 };

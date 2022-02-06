@@ -39,7 +39,6 @@ $selector: '.vcell',
 $reserveLastCell: false
 ) {
 
-
   $numRows: ceil(calc($numItems / $numCols));
   $numFullCols: $numCols - ($numRows * $numCols) + $numItems;
   @if ($reserveLastCell) {
