@@ -1,0 +1,8 @@
+@import '../../dist/scss-helpers'
+
+// Override as needed
+// $vgrid-max-items: 100 !default;
+// $vgrid-grid-gap: 1rem !default;
+
+@include vgrids();
+// @include vgrids($vgrid-max-items);

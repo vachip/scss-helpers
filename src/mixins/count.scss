@@ -1,0 +1,13 @@
+@mixin has-count($n)
+  @if $n > 1 {
+    &:first-child:nth-last-child(#{$n}),
+    &:first-child:nth-last-child(#{$n}) ~ & {
+      @content;
+    }
+  }
+  @elseif $n == 1 {
+    &:first-child:nth-last-child($n) {
+      @content;
+    }
+  }
+}
