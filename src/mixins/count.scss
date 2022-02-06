@@ -1,12 +1,16 @@
-@mixin has-count($n)
+// override selector if nested.
+@mixin has-count($n, $selector: null) {
+  @if ($selector == null) {
+    $selector: #{&};
+  }
   @if $n > 1 {
-    &:first-child:nth-last-child(#{$n}),
-    &:first-child:nth-last-child(#{$n}) ~ & {
+    #{$selector}:first-child:nth-last-child(#{$n}),
+    #{$selector}:first-child:nth-last-child(#{$n}) ~ #{$selector} {
       @content;
     }
   }
-  @elseif $n == 1 {
-    &:first-child:nth-last-child($n) {
+  @else if $n == 1 {
+    #{$selector}:first-child:nth-last-child(#{$n}) {
       @content;
     }
   }

@@ -24,13 +24,33 @@
 <!-- <script src="/scss-helpers/dist/scss-helpers.bundle.js"></script> -->
 <script src="dist/scss-helpers.bundle.js"></script>
 
+<style>
+/*
+.vgrid-3 :first-child:nth-last-child(5) {
+  background-color: blue !important;
+} */
+.vgrid-3 div:first-child:nth-last-child(5):nth-child(1),
+.vgrid-3 div:first-child:nth-last-child(5) ~ div:nth-child(1) {
+  background-color: blue !important;
+}
+
+.vgrid-3 div:first-child:nth-last-child(5):nth-child(2),
+.vgrid-3 div:first-child:nth-last-child(5) ~ div:nth-child(2) {
+  background-color: green !important;
+}
+
+.vgrid-3:nth-last-child(5) {
+  background-color: red !important;
+}
+
+</style>
 </head>
 
 <body>
   <h1>Example vgrid v1.4</h1>
 
   <h2>2 columns with 5 items</h3>
-  <div class="vgrid-3 vcells-5">
+  <div class="vgrid-3">
     <div>1</div>
     <div>2</div>
     <div>3</div>
