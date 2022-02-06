@@ -1,0 +1,68 @@
+$vgrid-max-items: 100;
+$vgrid-grid-gap: 1rem;
+
+
+@mixin vgrids($max-items: $vgrid-max-items) {
+  @for $i from 1 through $max-items {
+    .vgrid-#{$i} {
+      @include vgrid($i);
+    }
+  }
+}
+
+@mixin vgrid($numItems) {
+  display: grid;
+  // TODO - breakpoints
+  @include vcell()
+}
+
+@mixin vcell(
+$numItems,
+$numCols: 1,
+$selector: '.vcell',
+$grid-gap: $vgrid-grid-gap,
+$reserveLastCell: false
+) {
+  $pct: calc(100% - calc(#{$grid-gap} * #{$numCols - 1}));
+
+  $numRows: ceil($numItems/$numCols);
+  $numFullCols: $numCols - ($numRows * $numCols) + $numItems;
+  @if ($reserveLastCell) {
+    $numFullCols: $numFullCols - 1;
+  }
+
+  grid-gap: $vgrid-grid-gap;
+  grid-template-columns: repeat(#{$numCols}, calc(#{$pct} / #{$numCols}));
+
+  // Go through each column row-by-row and find the item
+  $done: [];
+  @for $c from 1 through $numCols {
+    $r: 1;
+    $maxRow: $rows;
+    @if ($cRow > $numFullCols) {
+      $maxRow: $rows - 1;
+    }
+    // Find the item for this cell
+    @for $i from 0 to $numItems {
+      @if (index($done, $i) == null) {
+        @for $c2 from $c through $numCols {
+          @if (index($done, $i) == null and $r <= $maxRow and ($i < ($c2 * $rows))) {
+            > .#{$selector}-#{$i} {
+              grid-col: $c;
+              grid-row: $r;
+            }
+            $r: $r + 1;
+            $done: append($done, $i);
+          }
+        }
+      }
+    }
+  }
+  // Always last cell (bottom/right) - keep at end of mixin
+  @if($reserveLastCell) {
+    > .#{$selector}-last {
+      grid-col: $numCols;
+      grid-row: $numRows;
+    }
+  }
+}
