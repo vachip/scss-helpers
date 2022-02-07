@@ -1,16 +1,23 @@
 @import './count';
 
+
 $vgrid-grid-gap: 1rem !default;
 
 // If more than 100 cells... adjust variable
-$vgrid-max-items: 5 !default;
-$vgrid-max-cols: 3 !default;
+$vgrid-max-items: 100 !default;
+$vgrid-max-cols: 12 !default;
+// 62.5 seconds with 100, 12  8.45 MiB
 
 @mixin vgrids(
 $max-items: $vgrid-max-items,
 $max-cols: $vgrid-max-cols,
 ) {
-  @for $c from 1 through $max-cols {
+  .vgrid-1 {
+    display: grid;
+    grid-gap: $vgrid-grid-gap;
+  }
+
+  @for $c from 2 through $max-cols {
     .vgrid-#{$c} {
       display: grid;
 
@@ -18,10 +25,69 @@ $max-cols: $vgrid-max-cols,
       grid-gap: $vgrid-grid-gap;
       grid-template-columns: repeat(#{$c}, calc(#{$pct} / #{$c}));
 
-      @if ($c > 1) {
-        @for $i from 2 through $max-items {
-          @include vgrid($i, $c);
+      $rMap: ('1': ''); // row: $n
+      // $cMap: ('1': ''); // col: $n
+
+      @for $t from 2 through $max-items {
+
+        $rMap: map-merge($rMap, ($t: '')); // row: $n
+        // $cMap: map-merge($cMap, ($t: '')); // col: $n
+
+        $rMaxed: ceil(calc($t/$c));
+        $cMaxed: $t % $c;
+        @if ($cMaxed == 0) {
+          $cMaxed: $c;
         }
+        $breakpoint: calc($rMaxed * $cMaxed);
+
+        @for $n from 2 through $breakpoint {
+          // $col: calc($n / $rMaxed);
+          $row: $n % $rMaxed;
+          @if ($row == 0) {
+            $row: $rMaxed;
+          }
+
+          $sel1: '*:first-child:nth-last-child(#{$t}):nth-child(#{$n}),';
+          $sel2: '*:first-child:nth-last-child(#{$t}) ~ *:nth-child(#{$n}),';
+
+          $rMap: map-merge($rMap, ($row: append(map-get($rMap, $row), $sel1)));
+          $rMap: map-merge($rMap, ($row: append(map-get($rMap, $row), $sel2)));
+          // $cMap: map-merge($cMap, ($col: append(map-get($cMap, $col), $sel1)));
+          // $cMap: map-merge($cMap, ($col: append(map-get($cMap, $col), $sel2)));
+        }
+        @if ($breakpoint+1 <= $t) {
+
+          @for $n from ($breakpoint+1) through $t {
+            // $col: calc(($n - $breakpoint) / ($rMaxed - 1)) + $cMaxed;
+            $row: ($n - $breakpoint) % ($rMaxed - 1);
+            @if ($row == 0) {
+              $row: $rMaxed - 1;
+            }
+
+            $sel1: '*:first-child:nth-last-child(#{$t}):nth-child(#{$n}),';
+            $sel2: '*:first-child:nth-last-child(#{$t}) ~ *:nth-child(#{$n}),';
+
+            $rMap: map-merge($rMap, ($row: append(map-get($rMap, $row), $sel1)));
+            $rMap: map-merge($rMap, ($row: append(map-get($rMap, $row), $sel2)));
+            // $cMap: map-merge($cMap, ($col: append(map-get($cMap, $col), $sel1)));
+            // $cMap: map-merge($cMap, ($col: append(map-get($cMap, $col), $sel2)));
+          }
+        }
+      }
+
+      @for $i from 2 through $max-items {
+        $rList: map-get($rMap, $i);
+        // $cList: map-get($cMap, $i);
+        @if ($rList != '') {
+          #{$rList} {
+            grid-row: $i;
+          }
+        }
+        // @if ($cList != '') {
+        //   #{$cList} {
+        //     grid-column: $i;
+        //   }
+        // }
       }
     }
   }
